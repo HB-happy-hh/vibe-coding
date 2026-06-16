@@ -869,7 +869,7 @@ git commit -m "feat(web): state machine and result rendering with 4 service type
 
 **Files:** 无新文件，仅手动验证。
 
-- [ ] **Step 1：起后端**
+- [x] **Step 1：起后端**
 
 ```bash
 cd server
@@ -879,7 +879,13 @@ npm run dev
 
 Expected: `[scan] listening on :3000`。
 
-- [ ] **Step 2：起前端**
+> ✅ 已验证：服务在 :3000 监听，`curl /health` → `{"ok":true}`。
+> 另：自动化校验全部通过——`npm test` 6/6 PASS、`tsc --noEmit` 0 错误。
+> 实测一次真·端到端调用（缺口马克杯测试图 → relay → claude-opus-4-7）：
+> HTTP 200，返回 `object=陶瓷马克杯/杯口有缺损`、56 字第一人称日记（≤100 ✓）、
+> `recommend.type=ecommerce`（符合"损坏→换新"规则）。两条 BAD_IMAGE 错误路径亦返回正确。
+
+- [ ] **Step 2：起前端**  ⏳ 待人工（需在浏览器/真机操作）
 
 ```bash
 # 另开终端
@@ -888,7 +894,7 @@ cd web && npm run dev
 
 Expected: Vite 输出 Local: `http://localhost:5173/` 与 Network 地址。
 
-- [ ] **Step 3：电脑模拟移动端**
+- [ ] **Step 3：电脑模拟移动端**  ⏳ 待人工（DevTools 设备模拟 + 视觉确认）
 
 Chrome DevTools → Toggle device toolbar → iPhone 14。打开 `http://localhost:5173`，从相册选一张缺口杯图片，应：
 
@@ -896,7 +902,7 @@ Chrome DevTools → Toggle device toolbar → iPhone 14。打开 `http://localho
 - 进入结果屏，显示物品名+状态、≤100 字日记、ecommerce 类服务卡
 - 点"去看看"跳到淘宝搜索
 
-- [ ] **Step 4：真机验证**
+- [ ] **Step 4：真机验证**  ⏳ 待人工（需手机相机拍三类样图）
 
 手机和电脑同 WiFi，浏览器输 `电脑局域网IP:5173`。点快门唤起相机，拍三类样图：
 
@@ -906,9 +912,13 @@ Chrome DevTools → Toggle device toolbar → iPhone 14。打开 `http://localho
 
 记录结果是否符合服务匹配规则。
 
-- [ ] **Step 5：错误路径验证**
+- [ ] **Step 5：错误路径验证**  ⏳ 待人工（需在前端 UI 触发并看重试）
 
 后端关掉，前端再扫一次：应显示"AI 走神了，再试一次"和重试按钮。重启后端，点重试应恢复。
+
+> 注：后端侧错误码已用 curl 验证（BAD_IMAGE 两路 → 400）。此步剩下的是前端 UI 呈现，需人工。
+
+- [ ] **Step 6：最终提交（如有微调）**  ✅ 已提交 `claude-opus-4-7` 模型微调（754de93）
 
 - [ ] **Step 6：最终提交（如有微调）**
 
