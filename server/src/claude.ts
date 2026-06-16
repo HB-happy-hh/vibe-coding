@@ -34,7 +34,7 @@ export async function callClaude(imageDataUrl: string): Promise<ScanResult> {
     'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif';
 
   const resp = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: 'claude-opus-4-7',
     max_tokens: 800,
     system: SYSTEM_PROMPT,
     messages: [{
