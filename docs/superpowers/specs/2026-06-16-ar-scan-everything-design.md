@@ -25,8 +25,8 @@
        <--日记+推荐 JSON-----        <----结构化 JSON----
 ```
 
-- 前端是单页 H5，使用 `<input type="file" accept="image/*" capture="environment">` 唤起相机/相册，把图片压到 ≤ 2MB 后 base64 上传
-- 后端只做一件事：藏住 API 密钥、拼好 prompt、把 Claude 的回复转成稳定的 JSON 给前端
+- 前端是单页 H5（vanilla HTML/CSS/JS，开发期用 Vite 做静态托管 + 移动调试），使用 `<input type="file" accept="image/*" capture="environment">` 唤起相机/相册，把图片压到 ≤ 2MB 后 base64 上传
+- 后端用 Node + TypeScript（`tsx` 直跑，免编译），只做一件事：藏住 API 密钥、拼好 prompt、把 Claude 的回复转成稳定的 JSON 给前端
 - 一次 Claude 请求同时产出：物品名、状态、第一人称日记、服务类型、推荐文案与关键词
 
 ### 模块边界
@@ -110,7 +110,7 @@ Content-Type: application/json
 
 1. **拍照 / 选图屏**：满屏取景占位 + 取景框 + 底部三键（相册 / 快门 / 闪光）；不实际接 getUserMedia，靠 `<input capture>` 在系统层完成拍摄
 2. **扫描中屏**：物品预览图 + 一道扫描线动画 + "AI 正在阅读……"，等待后端响应
-3. **结果屏**：物品缩略图 + 识别标签 + 日记卡（白底大字 + 引号点缀）+ 服务卡（按 `type` 着色与图标，CTA 按钮）
+3. **结果屏**：物品缩略图 + 识别标签 + 日记卡（暖白底 + 大字日记 + 引号点缀，整体走橙色主色调）+ 服务卡（按 `type` 着色与图标，CTA 按钮）
 
 服务卡点击行为：
 
