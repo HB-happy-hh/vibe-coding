@@ -25,7 +25,10 @@ export function extractJson(raw: string): ScanResult {
 }
 
 export async function callClaude(imageDataUrl: string): Promise<ScanResult> {
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    baseURL: process.env.ANTHROPIC_BASE_URL,
+  });
   const [meta, base64] = imageDataUrl.split(',');
   const mediaType = (meta.match(/data:(image\/\w+);base64/)?.[1] ?? 'image/jpeg') as
     'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif';
