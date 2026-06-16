@@ -1,28 +1,46 @@
 // 把 File 压缩到 maxBytes 以内（默认 1.8MB 留点余量），返回 dataURL
 export async function compressImage(file, maxBytes = 1.8 * 1024 * 1024) {
-  const bitmap = await createImageBitmap(file);
-  const maxSide = 1280;
-  let { width, height } = bitmap;
-  if (Math.max(width, height) > maxSide) {
-    const ratio = maxSide / Math.max(width, height);
-    width = Math.round(width * ratio);
-    height = Math.round(height * ratio);
-  }
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+  const { img, revoke } = await loadImage(file);
+  try {
+    const maxSide = 1280;
+    let width = img.naturalWidth || img.width;
+    let height = img.naturalHeight || img.height;
+    if (!width || !height) throw new Error('无法读取图片尺寸');
+    if (Math.max(width, height) > maxSide) {
+      const ratio = maxSide / Math.max(width, height);
+      width = Math.round(width * ratio);
+      height = Math.round(height * ratio);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
 
-  let quality = 0.85;
-  let dataUrl = canvas.toDataURL('image/jpeg', quality);
-  while (estimateBytes(dataUrl) > maxBytes && quality > 0.4) {
-    quality -= 0.1;
-    dataUrl = canvas.toDataURL('image/jpeg', quality);
+    let quality = 0.85;
+    let dataUrl = canvas.toDataURL('image/jpeg', quality);
+    while (estimateBytes(dataUrl) > maxBytes && quality > 0.4) {
+      quality -= 0.1;
+      dataUrl = canvas.toDataURL('image/jpeg', quality);
+    }
+    if (estimateBytes(dataUrl) > maxBytes) {
+      throw new Error('图片太大，换张试试');
+    }
+    return dataUrl;
+  } finally {
+    revoke();
   }
-  if (estimateBytes(dataUrl) > maxBytes) {
-    throw new Error('图片太大，换张试试');
-  }
-  return dataUrl;
+}
+
+// 用 <img> + objectURL 解码：Safari 能原生解码 HEIC，比 createImageBitmap 兼容性更好
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    const revoke = () => URL.revokeObjectURL(url);
+    img.onload = () => resolve({ img, revoke });
+    img.onerror = () => { revoke(); reject(new Error('图片解码失败（格式不支持？）')); };
+    img.src = url;
+  });
 }
 
 function estimateBytes(dataUrl) {

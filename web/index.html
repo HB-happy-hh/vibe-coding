@@ -16,21 +16,17 @@
         <p class="hint">把物品放进框里，看看它想说啥</p>
       </div>
       <div class="dock">
-        <label class="album">
-          相册
-          <input id="file-album" type="file" accept="image/*" hidden />
-        </label>
-        <label class="shutter" aria-label="拍照">
-          <input id="file-camera" type="file" accept="image/*" capture="environment" hidden />
-        </label>
+        <button type="button" class="album" id="btn-album">相册</button>
+        <button type="button" class="shutter" id="btn-shutter" aria-label="拍照"></button>
         <span class="placeholder-btn">闪光</span>
       </div>
+      <input id="file-album" type="file" accept="image/*" hidden />
+      <input id="file-camera" type="file" accept="image/*" capture="environment" hidden />
     </section>
 
     <!-- 扫描中屏 -->
     <section id="screen-scanning" class="screen">
-      <div class="preview"><img id="preview-img" alt="" /></div>
-      <div class="scan-line"></div>
+      <div class="preview"><img id="preview-img" alt="" /><div class="scan-line"></div></div>
       <p class="status">AI 正在阅读……</p>
     </section>
 

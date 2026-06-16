@@ -13,8 +13,10 @@ function show(name) {
 
 const fileCamera = document.querySelector('#file-camera');
 const fileAlbum = document.querySelector('#file-album');
-const shutter = document.querySelector('.shutter');
-shutter.addEventListener('click', () => fileCamera.click());
+const hint = document.querySelector('#screen-capture .hint');
+
+document.querySelector('#btn-shutter').addEventListener('click', () => fileCamera.click());
+document.querySelector('#btn-album').addEventListener('click', () => fileAlbum.click());
 
 fileCamera.addEventListener('change', e => onPick(e.target.files?.[0]));
 fileAlbum.addEventListener('change', e => onPick(e.target.files?.[0]));
@@ -29,7 +31,7 @@ async function onPick(file) {
   try {
     lastDataUrl = await compressImage(file);
   } catch (err) {
-    alert(err.message ?? '图片处理失败');
+    if (hint) hint.textContent = '图片处理失败：' + (err?.message ?? err);
     return;
   }
   document.querySelector('#preview-img').src = lastDataUrl;
