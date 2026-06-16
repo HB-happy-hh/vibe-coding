@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>万物皆可扫</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <main id="app">
+    <!-- 拍照屏 -->
+    <section id="screen-capture" class="screen active">
+      <div class="finder">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <p class="hint">把物品放进框里，看看它想说啥</p>
+      </div>
+      <div class="dock">
+        <label class="album">
+          相册
+          <input id="file-album" type="file" accept="image/*" hidden />
+        </label>
+        <label class="shutter" aria-label="拍照">
+          <input id="file-camera" type="file" accept="image/*" capture="environment" hidden />
+        </label>
+        <span class="placeholder-btn">闪光</span>
+      </div>
+    </section>
+
+    <!-- 扫描中屏 -->
+    <section id="screen-scanning" class="screen">
+      <div class="preview"><img id="preview-img" alt="" /></div>
+      <div class="scan-line"></div>
+      <p class="status">AI 正在阅读……</p>
+    </section>
+
+    <!-- 结果屏 -->
+    <section id="screen-result" class="screen">
+      <header class="result-head">
+        <img id="thumb" alt="" />
+        <div>
+          <div class="tag" id="obj-name">—</div>
+          <div class="state" id="obj-state">—</div>
+        </div>
+      </header>
+      <article class="diary-card">
+        <span class="quote">「</span>
+        <p id="diary-text">—</p>
+      </article>
+      <article class="service-card" id="service-card">
+        <h3 id="svc-title">—</h3>
+        <p id="svc-reason">—</p>
+        <button id="svc-cta" type="button">—</button>
+        <p id="svc-tip" hidden></p>
+      </article>
+      <button id="retake" class="ghost" type="button">再扫一个</button>
+    </section>
+
+    <!-- 错误屏（嵌在结果屏内） -->
+    <template id="tpl-error">
+      <article class="error-card">
+        <p>AI 走神了，再试一次。</p>
+        <button id="retry" type="button">重试</button>
+      </article>
+    </template>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

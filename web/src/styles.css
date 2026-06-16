@@ -1,0 +1,79 @@
+:root {
+  --bg: #fff7ef;
+  --orange: #ff7a3d;
+  --ink: #1c1917;
+  --muted: #78716c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #app { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+.screen { display: none; min-height: 100vh; padding: 16px; }
+.screen.active { display: block; }
+
+/* 拍照屏 */
+#screen-capture { position: relative; padding: 0; height: 100vh; background: #1c1917; }
+.finder { position: absolute; inset: 64px 24px 160px; border-radius: 16px; }
+.corner { position: absolute; width: 24px; height: 24px; border: 3px solid var(--orange); }
+.corner.tl { top: 0; left: 0; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
+.corner.tr { top: 0; right: 0; border-left: 0; border-bottom: 0; border-top-right-radius: 8px; }
+.corner.bl { bottom: 0; left: 0; border-right: 0; border-top: 0; border-bottom-left-radius: 8px; }
+.corner.br { bottom: 0; right: 0; border-left: 0; border-top: 0; border-bottom-right-radius: 8px; }
+.hint { position: absolute; bottom: -40px; left: 0; right: 0; text-align: center; color: #fff; opacity: .7; }
+.dock { position: absolute; bottom: 24px; left: 0; right: 0; display: flex; justify-content: space-around; align-items: center; color: #fff; }
+.album, .placeholder-btn { font-size: 14px; opacity: .8; cursor: pointer; }
+.shutter {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: #fff; border: 6px solid var(--orange);
+  cursor: pointer;
+}
+
+/* 扫描中屏 */
+#screen-scanning { background: #1c1917; color: #fff; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+#screen-scanning.active { display: flex; }
+.preview { width: 80vw; max-width: 320px; aspect-ratio: 1; overflow: hidden; border-radius: 16px; position: relative; }
+.preview img { width: 100%; height: 100%; object-fit: cover; }
+.scan-line {
+  width: 80vw; max-width: 320px; height: 3px; background: var(--orange);
+  box-shadow: 0 0 12px var(--orange);
+  animation: scan 1.6s ease-in-out infinite alternate;
+}
+@keyframes scan { from { transform: translateY(-120px); } to { transform: translateY(120px); } }
+.status { opacity: .7; }
+
+/* 结果屏 */
+#screen-result { display: none; }
+#screen-result.active { display: block; }
+.result-head { display: flex; gap: 12px; align-items: center; padding: 8px 4px 16px; }
+.result-head img { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; }
+.tag { display: inline-block; padding: 2px 10px; background: var(--orange); color: #fff; border-radius: 999px; font-size: 13px; }
+.state { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+.diary-card {
+  background: #fff; border-radius: 16px; padding: 20px 18px;
+  position: relative; box-shadow: 0 4px 16px rgba(255,122,61,.08);
+}
+.diary-card .quote { color: var(--orange); font-size: 32px; line-height: 0; position: absolute; top: 18px; left: 14px; }
+.diary-card p { padding-left: 18px; line-height: 1.7; font-size: 15px; }
+
+.service-card {
+  margin-top: 16px; background: #fff; border-radius: 16px; padding: 18px;
+  border-left: 4px solid var(--orange);
+}
+.service-card h3 { font-size: 16px; margin-bottom: 6px; }
+.service-card p { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+.service-card button {
+  background: var(--orange); color: #fff; border: 0;
+  padding: 10px 18px; border-radius: 999px; font-size: 14px; cursor: pointer;
+}
+.service-card[data-type="local"]   { border-left-color: #2a9d8f; }
+.service-card[data-type="resale"]  { border-left-color: #6a8eff; }
+.service-card[data-type="tips"]    { border-left-color: #b08ce8; }
+
+#retake { display: block; margin: 24px auto 8px; background: transparent; color: var(--muted); border: 1px solid var(--muted); padding: 8px 18px; border-radius: 999px; }
+
+.error-card { background: #fff; border-radius: 16px; padding: 18px; text-align: center; margin-top: 16px; }
+.error-card button { margin-top: 12px; background: var(--orange); color: #fff; border: 0; padding: 8px 18px; border-radius: 999px; }
