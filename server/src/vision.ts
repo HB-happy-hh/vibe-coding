@@ -26,12 +26,12 @@ export function extractJson(raw: string): ScanResult {
 
 export async function callVision(imageDataUrl: string): Promise<ScanResult> {
   const client = new OpenAI({
-    apiKey: process.env.ZHIPU_API_KEY,
-    baseURL: process.env.ZHIPU_BASE_URL || 'https://open.bigmodel.cn/api/paas/v4/',
+    apiKey: process.env.QWEN_API_KEY,
+    baseURL: process.env.QWEN_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1',
   });
 
   const resp = await client.chat.completions.create({
-    model: 'glm-5v-turbo',
+    model: process.env.QWEN_MODEL || 'qwen3.6-plus',
     max_tokens: 800,
     messages: [{
       role: 'user',
@@ -42,6 +42,20 @@ export async function callVision(imageDataUrl: string): Promise<ScanResult> {
     }]
   });
 
-  const text = resp.choices?.[0]?.message?.content ?? '';
-  return extractJson(text);
+  const choice = resp.choices?.[0];
+  // dump full response structure for debugging
+  console.log('[vision] model:', resp.model, '| tokens:', resp.usage?.total_tokens);
+  console.log('[vision] finish_reason:', choice?.finish_reason);
+  console.log('[vision] message keys:', Object.keys(choice?.message ?? {}));
+  console.log('[vision] raw message:', JSON.stringify(choice?.message, null, 2).slice(0, 800));
+
+  const text = typeof choice?.message?.content === 'string'
+    ? choice.message.content
+    : '';
+  try {
+    return extractJson(text);
+  } catch (err) {
+    console.error('[vision] extractJson failed. Raw text (first 500 chars):', text.slice(0, 500));
+    throw err;
+  }
 }
