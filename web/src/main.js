@@ -39,12 +39,29 @@ async function onPick(file) {
   runScan();
 }
 
+let timerId = null;
+function startTimer() {
+  const el = document.querySelector('#scan-timer');
+  const t0 = Date.now();
+  if (el) el.textContent = '0.0s';
+  stopTimer();
+  timerId = setInterval(() => {
+    if (el) el.textContent = ((Date.now() - t0) / 1000).toFixed(1) + 's';
+  }, 100);
+}
+function stopTimer() {
+  if (timerId) { clearInterval(timerId); timerId = null; }
+}
+
 async function runScan() {
+  startTimer();
   try {
     const data = await scan(lastDataUrl);
+    stopTimer();
     renderResult(data);
     show('result');
   } catch (err) {
+    stopTimer();
     renderError(err.message);
     show('result');
   }
@@ -82,12 +99,15 @@ function renderResult(data) {
 function renderError(code) {
   document.querySelector('#service-card').hidden = true;
   document.querySelector('#diary-text').textContent = '';
-  document.querySelector('#obj-name').textContent = '出错了';
+  document.querySelector('#obj-name').textContent = code === 'TIMEOUT' ? '超时了' : '出错了';
   document.querySelector('#obj-state').textContent = code ?? '';
 
   removeError();
   const tpl = document.querySelector('#tpl-error');
   const node = tpl.content.firstElementChild.cloneNode(true);
+  if (code === 'TIMEOUT') {
+    node.querySelector('p').textContent = 'AI 想了 60 秒还没结果，再试一次。';
+  }
   node.querySelector('#retry').addEventListener('click', () => {
     show('scanning');
     runScan();

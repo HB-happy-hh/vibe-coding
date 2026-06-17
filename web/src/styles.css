@@ -43,6 +43,7 @@ body {
 }
 @keyframes scan { from { top: 0; } to { top: calc(100% - 3px); } }
 .status { opacity: .7; }
+#scan-timer { margin-left: 8px; font-variant-numeric: tabular-nums; opacity: .9; }
 
 /* 结果屏 */
 #screen-result { display: none; }
