@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { SYSTEM_PROMPT, USER_TEXT } from './prompt.ts';
+import { SYSTEM_PROMPT, USER_TEXT } from './prompt';
 
 export interface ScanResult {
   object: { name: string; state: string };
