@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { extractJson } from '../src/claude.ts';
+import { extractJson } from '../src/vision.ts';
 
 describe('extractJson', () => {
   it('parses pure JSON', () => {

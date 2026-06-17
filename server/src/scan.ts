@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from 'express';
-import { callClaude } from './claude.ts';
+import { callVision } from './vision.ts';
 
 const MAX_BYTES = 2 * 1024 * 1024;
 
@@ -16,7 +16,7 @@ export function mountScan(app: Express): void {
     }
 
     try {
-      const result = await callClaude(image);
+      const result = await callVision(image);
       res.json(result);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'unknown';

@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
 
-vi.mock('../src/claude.ts', () => ({
-  callClaude: vi.fn(async () => ({
+vi.mock('../src/vision.ts', () => ({
+  callVision: vi.fn(async () => ({
     object: { name: '杯子', state: '缺口' },
     diary: '我是杯子',
     recommend: { type: 'ecommerce', title: 't', reason: 'r', keyword: '杯子', cta: '去看看' }
