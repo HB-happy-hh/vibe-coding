@@ -6,13 +6,16 @@
   "scripts": {
     "dev:server": "cd server && npm run dev",
     "dev:web": "cd web && npm run dev",
-    "build:web": "cd web && npm run build",
+    "build:web": "cd web && npm install && npm run build",
+    "build:api": "esbuild api/scan.ts --bundle --platform=node --target=node20 --format=esm --outfile=api/scan.js --external:openai",
+    "build": "npm run build:web && npm run build:api",
     "test": "cd server && npm test"
   },
   "dependencies": {
     "openai": "^4.104.0"
   },
   "devDependencies": {
-    "@vercel/node": "^5.1.0"
+    "@vercel/node": "^5.1.0",
+    "esbuild": "^0.25.0"
   }
 }

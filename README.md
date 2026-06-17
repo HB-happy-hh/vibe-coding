@@ -42,6 +42,26 @@ cd web && npm install && npm run dev         # 出现 Local / Network 地址即�
 
 浏览器打开 `http://localhost:5173`，看到拍照界面即可开始使用。
 
+## 部署到 Vercel
+
+本仓库已经同时保留了：
+- 本地开发入口：`server/src/index.ts`
+- Vercel 函数入口：`api/scan.ts`
+
+部署时直接让 Vercel 使用仓库根目录即可：
+
+1. 导入这个 Git 仓库
+2. Build Command 保持为仓库里的 `npm run build:web`
+3. Output Directory 保持为 `web/dist`
+4. 在 Vercel 项目环境变量里配置：
+   - `QWEN_API_KEY`
+   - `QWEN_BASE_URL`
+   - `QWEN_MODEL`
+
+前端线上仍然请求同域名下的 `/api/scan`，不需要额外改前端接口地址。
+
+> 说明：Vercel 上的 `api/scan.ts` 会复用 `server/src/run-scan.ts`、`server/src/vision.ts` 和 `server/src/prompt.ts` 这套业务逻辑；本地开发和线上部署共用一份核心实现。
+
 ## 移动端使用步骤
 
 **方式一 · 同一 WiFi**：手机与电脑连同一 WiFi，手机浏览器打开前端启动时打印的 **`Network`** 地址（形如 `http://192.168.x.x:5173`，不是 `localhost`）。
@@ -79,4 +99,3 @@ cd web && npm install && npm run dev         # 出现 Local / Network 地址即�
   - ② 电脑代理软件（VPN/Clash）劫持局域网流量，临时关掉
   - ③ 校园网/公共 WiFi 有 AP 隔离，改用手机热点让电脑连
 - **手机拍照后卡住** → iOS 的 HEIC 格式已做兼容，但部分安卓机型可能有问题；尝试从相册选图而非直接拍照。
-
