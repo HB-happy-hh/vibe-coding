@@ -885,7 +885,7 @@ Expected: `[scan] listening on :3000`。
 > HTTP 200，返回 `object=陶瓷马克杯/杯口有缺损`、56 字第一人称日记（≤100 ✓）、
 > `recommend.type=ecommerce`（符合"损坏→换新"规则）。两条 BAD_IMAGE 错误路径亦返回正确。
 
-- [ ] **Step 2：起前端**  ⏳ 待人工（需在浏览器/真机操作）
+- [x] **Step 2：起前端**  ✅ 真机已访问
 
 ```bash
 # 另开终端
@@ -894,7 +894,13 @@ cd web && npm run dev
 
 Expected: Vite 输出 Local: `http://localhost:5173/` 与 Network 地址。
 
-- [ ] **Step 3：电脑模拟移动端**  ⏳ 待人工（DevTools 设备模拟 + 视觉确认）
+> ✅ 已验证：手机经手机热点访问 `http://172.20.10.2:5173` 可正常打开。
+> 联调中发现并修复三处前端 bug（提交 `405c667`）：
+> 1. 拍照 input 嵌在 `<label>` 内 + JS 手动 `.click()` 造成双触发，iOS 拍完卡在拍照屏；
+> 2. `createImageBitmap` 对 iPhone HEIC 不稳，改 `<img>`+objectURL；
+> 3. 扫描线在 `.preview` 框外，移入框内并改 `top` 动画。
+
+- [ ] **Step 3：电脑模拟移动端**  ⏳ 已用真机替代（见 Step 4）
 
 Chrome DevTools → Toggle device toolbar → iPhone 14。打开 `http://localhost:5173`，从相册选一张缺口杯图片，应：
 
@@ -902,7 +908,7 @@ Chrome DevTools → Toggle device toolbar → iPhone 14。打开 `http://localho
 - 进入结果屏，显示物品名+状态、≤100 字日记、ecommerce 类服务卡
 - 点"去看看"跳到淘宝搜索
 
-- [ ] **Step 4：真机验证**  ⏳ 待人工（需手机相机拍三类样图）
+- [ ] **Step 4：真机验证**  ⏳ 待人工（环境已就绪，拍照闭环已通；剩三类样图核对未做）
 
 手机和电脑同 WiFi，浏览器输 `电脑局域网IP:5173`。点快门唤起相机，拍三类样图：
 
@@ -912,7 +918,10 @@ Chrome DevTools → Toggle device toolbar → iPhone 14。打开 `http://localho
 
 记录结果是否符合服务匹配规则。
 
-- [ ] **Step 5：错误路径验证**  ⏳ 待人工（需在前端 UI 触发并看重试）
+> ⏳ 2026-06-16 暂缓：真机已能拍照、跑通完整闭环（拍照→扫描动效→结果屏），
+> 但三类样图（缺口杯/蔫绿植/完好旧鞋）的服务类型核对尚未人工执行。环境随时可继续。
+
+- [ ] **Step 5：错误路径验证**  ⏳ 待人工（未执行）
 
 后端关掉，前端再扫一次：应显示"AI 走神了，再试一次"和重试按钮。重启后端，点重试应恢复。
 
