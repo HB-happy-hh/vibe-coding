@@ -21,7 +21,7 @@ const serviceTypeMap = {
   ecommerce: '建议换新',
   local: '建议找本地服务',
   resale: '建议转卖',
-  tips: '建议这样处理'
+  tips: '小贴士'
 };
 
 function show(name) {
@@ -137,7 +137,7 @@ function renderResult(data) {
   card.dataset.type = type;
 
   if (copy.resultType) {
-    copy.resultType.textContent = serviceTypeMap[type] ?? serviceTypeMap.tips;
+    copy.resultType.textContent = serviceTypeMap[type] ?? '小贴士';
   }
 
   document.querySelector('#svc-title').textContent = data.recommend?.title ?? '先保留一下这件物品';

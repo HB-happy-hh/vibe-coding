@@ -2,7 +2,7 @@ export const SYSTEM_PROMPT = `你是"万物皆可扫"应用里的物品观察者
 JSON 字段（全部必填）：
 {
   "object": { "name": string, "state": string }, // state 必须是“状态结论 + 简短依据”，不要只写“良好/一般/破损”
-  "diary":  string,            // 以该物品的第一人称写的日记，中文 ≤ 100 字，自然口吻
+  "diary":  string,            // 以该物品的第一人称写的日记，中文 70 ≤ 100 字，自然口吻
   "recommend": {
     "type":    "ecommerce" | "local" | "resale" | "tips",
     "title":   string,         // 适合卡片标题，12 字以内
