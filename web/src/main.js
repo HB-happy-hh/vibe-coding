@@ -36,11 +36,6 @@ const lightboxClose = document.querySelector('#lightbox-close');
 
 document.querySelector('#btn-shutter').addEventListener('click', () => fileCamera.click());
 document.querySelector('#btn-album').addEventListener('click', () => fileAlbum.click());
-document.querySelector('#btn-demo').addEventListener('click', () => {
-  if (copy.captureHint) {
-    copy.captureHint.textContent = '可以试试旧玩具、杯子、摆件、闲置数码，故事感会更强。';
-  }
-});
 
 fileCamera.addEventListener('change', (event) => onPick(event.target.files?.[0]));
 fileAlbum.addEventListener('change', (event) => onPick(event.target.files?.[0]));
