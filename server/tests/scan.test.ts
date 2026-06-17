@@ -6,7 +6,7 @@ vi.mock('../src/vision.ts', () => ({
   callVision: vi.fn(async () => ({
     object: { name: '杯子', state: '缺口' },
     diary: '我是杯子',
-    recommend: { type: 'ecommerce', title: 't', reason: 'r', keyword: '杯子', cta: '去看看' }
+    recommend: { type: 'ecommerce', title: 't', reason: 'r', detail: 'd', keyword: '杯子', cta: '去看看' }
   }))
 }));
 

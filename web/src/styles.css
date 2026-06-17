@@ -44,6 +44,10 @@ button {
   color: inherit;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 #app {
   position: relative;
   min-height: 100vh;
@@ -238,8 +242,7 @@ button {
 }
 
 .capture-tips span,
-.status-pill,
-.result-type {
+.status-pill {
   padding: 8px 12px;
   border-radius: 999px;
   background: var(--panel-soft);
@@ -461,11 +464,31 @@ button {
   padding: 16px;
 }
 
-.result-head img {
+.thumb-button {
   width: 72px;
   height: 72px;
   border-radius: 20px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.thumb-button:hover,
+.thumb-button:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(255, 122, 61, 0.5);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+  outline: none;
+}
+
+.thumb-button img {
+  width: 72px;
+  height: 72px;
   object-fit: cover;
+  display: block;
 }
 
 .result-head-copy h2 {
@@ -479,14 +502,6 @@ button {
   color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
-}
-
-.result-type {
-  grid-column: 1 / -1;
-  justify-self: start;
-  color: #ffd3bf;
-  background: rgba(255, 122, 61, 0.12);
-  border-color: rgba(255, 122, 61, 0.18);
 }
 
 .diary-card,
@@ -581,6 +596,44 @@ button {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 5, 8, 0.82);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+}
+
+.lightbox-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 820px);
+  max-height: min(88vh, 980px);
+  padding: 12px;
+  border-radius: 28px;
+  background: rgba(16, 18, 22, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+}
+
+.lightbox-dialog img {
+  width: 100%;
+  max-height: calc(88vh - 24px);
+  object-fit: contain;
+  display: block;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
 @keyframes scan {
   from {
     transform: translateY(0);
@@ -623,6 +676,7 @@ button {
 
   .tool-button,
   .shutter,
+  .thumb-button,
   .service-card button,
   .error-card button,
   #retake {

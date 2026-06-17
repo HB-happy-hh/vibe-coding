@@ -95,13 +95,14 @@
     <section id="screen-result" class="screen">
       <div class="result-layout">
         <header class="result-head">
-          <img id="thumb" alt="识别结果缩略图" />
+          <button type="button" class="thumb-button" id="thumb-button" aria-label="查看原图">
+            <img id="thumb" alt="识别结果缩略图" />
+          </button>
           <div class="result-head-copy">
             <p class="result-kicker">识别完成</p>
             <h2 id="obj-name">未识别物品</h2>
             <p class="state" id="obj-state"></p>
           </div>
-          <span class="result-type" id="result-type">灵感建议</span>
         </header>
 
         <article class="diary-card">
@@ -110,7 +111,7 @@
         </article>
 
         <article class="service-card" id="service-card">
-          <p class="section-label">下一步建议</p>
+          <p class="section-label" id="svc-type-label">结果类型</p>
           <h3 id="svc-title"></h3>
           <p id="svc-reason"></p>
           <button id="svc-cta" type="button"></button>
@@ -131,6 +132,13 @@
         <button id="retry" type="button">再试一次</button>
       </article>
     </template>
+
+    <div class="image-lightbox" id="image-lightbox" hidden>
+      <button type="button" class="lightbox-backdrop" id="lightbox-close" aria-label="关闭原图预览"></button>
+      <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-label="原图预览">
+        <img id="lightbox-image" alt="原图预览" />
+      </div>
+    </div>
   </main>
 
   <script type="module" src="/src/main.js"></script>

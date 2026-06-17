@@ -9,14 +9,19 @@ const screens = {
 
 const copy = {
   captureHint: document.querySelector('#capture-hint'),
-  resultType: document.querySelector('#result-type')
+  resultType: document.querySelector('#svc-type-label')
+};
+
+const lightbox = {
+  root: document.querySelector('#image-lightbox'),
+  image: document.querySelector('#lightbox-image')
 };
 
 const serviceTypeMap = {
-  ecommerce: '电商推荐',
-  local: '附近去处',
-  resale: '转卖建议',
-  tips: '灵感建议'
+  ecommerce: '建议换新',
+  local: '建议找本地服务',
+  resale: '建议转卖',
+  tips: '建议这样处理'
 };
 
 function show(name) {
@@ -26,6 +31,8 @@ function show(name) {
 
 const fileCamera = document.querySelector('#file-camera');
 const fileAlbum = document.querySelector('#file-album');
+const thumbButton = document.querySelector('#thumb-button');
+const lightboxClose = document.querySelector('#lightbox-close');
 
 document.querySelector('#btn-shutter').addEventListener('click', () => fileCamera.click());
 document.querySelector('#btn-album').addEventListener('click', () => fileAlbum.click());
@@ -44,6 +51,20 @@ document.querySelector('#retake').addEventListener('click', () => {
     copy.captureHint.textContent = '优先拍正面，光线均匀一点，识别会更稳。';
   }
   show('capture');
+});
+
+thumbButton.addEventListener('click', () => openLightbox(lastDataUrl));
+lightboxClose.addEventListener('click', closeLightbox);
+lightbox.root.addEventListener('click', (event) => {
+  if (event.target === lightbox.root) {
+    closeLightbox();
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    closeLightbox();
+  }
 });
 
 let lastDataUrl = null;
@@ -107,7 +128,7 @@ async function runScan() {
 function renderResult(data) {
   document.querySelector('#thumb').src = lastDataUrl;
   document.querySelector('#obj-name').textContent = data.object?.name ?? '未识别物品';
-  document.querySelector('#obj-state').textContent = data.object?.state ?? '可以换个角度再扫一次。';
+  document.querySelector('#obj-state').textContent = data.object?.state ?? '状态暂时看起来正常，未见明显异常。';
   document.querySelector('#diary-text').textContent = data.diary ?? '这件物品暂时还没整理出清晰故事。';
 
   const card = document.querySelector('#service-card');
@@ -143,7 +164,7 @@ function renderResult(data) {
     }
 
     tip.hidden = false;
-    tip.textContent = data.recommend?.reason ?? '先从最容易执行的一步开始。';
+    tip.textContent = data.recommend?.detail ?? data.recommend?.reason ?? '先从最容易执行的一步开始。';
   };
 
   removeError();
@@ -173,6 +194,17 @@ function renderError(code) {
 
 function removeError() {
   document.querySelector('#screen-result .error-card')?.remove();
+}
+
+function openLightbox(src) {
+  if (!src) return;
+  lightbox.image.src = src;
+  lightbox.root.hidden = false;
+}
+
+function closeLightbox() {
+  lightbox.root.hidden = true;
+  lightbox.image.removeAttribute('src');
 }
 
 function formatErrorMessage(code) {
