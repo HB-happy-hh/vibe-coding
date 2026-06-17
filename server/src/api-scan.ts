@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { runScan } from '../server/src/run-scan';
+import { runScan } from './run-scan';
 
 export const config = {
   maxDuration: 60,
