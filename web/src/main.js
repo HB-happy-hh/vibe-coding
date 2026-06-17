@@ -6,51 +6,88 @@ const screens = {
   scanning: document.querySelector('#screen-scanning'),
   result: document.querySelector('#screen-result')
 };
+
+const copy = {
+  captureHint: document.querySelector('#capture-hint'),
+  resultType: document.querySelector('#result-type')
+};
+
+const serviceTypeMap = {
+  ecommerce: '电商推荐',
+  local: '附近去处',
+  resale: '转卖建议',
+  tips: '灵感建议'
+};
+
 function show(name) {
-  Object.values(screens).forEach(s => s.classList.remove('active'));
+  Object.values(screens).forEach((screen) => screen.classList.remove('active'));
   screens[name].classList.add('active');
 }
 
 const fileCamera = document.querySelector('#file-camera');
 const fileAlbum = document.querySelector('#file-album');
-const hint = document.querySelector('#screen-capture .hint');
 
 document.querySelector('#btn-shutter').addEventListener('click', () => fileCamera.click());
 document.querySelector('#btn-album').addEventListener('click', () => fileAlbum.click());
+document.querySelector('#btn-demo').addEventListener('click', () => {
+  if (copy.captureHint) {
+    copy.captureHint.textContent = '可以试试旧玩具、杯子、摆件、闲置数码，故事感会更强。';
+  }
+});
 
-fileCamera.addEventListener('change', e => onPick(e.target.files?.[0]));
-fileAlbum.addEventListener('change', e => onPick(e.target.files?.[0]));
+fileCamera.addEventListener('change', (event) => onPick(event.target.files?.[0]));
+fileAlbum.addEventListener('change', (event) => onPick(event.target.files?.[0]));
 document.querySelector('#retake').addEventListener('click', () => {
-  fileCamera.value = ''; fileAlbum.value = '';
+  fileCamera.value = '';
+  fileAlbum.value = '';
+  if (copy.captureHint) {
+    copy.captureHint.textContent = '优先拍正面，光线均匀一点，识别会更稳。';
+  }
   show('capture');
 });
 
 let lastDataUrl = null;
+
 async function onPick(file) {
   if (!file) return;
+
   try {
     lastDataUrl = await compressImage(file);
   } catch (err) {
-    if (hint) hint.textContent = '图片处理失败：' + (err?.message ?? err);
+    if (copy.captureHint) {
+      copy.captureHint.textContent = `图片处理失败：${err?.message ?? err}`;
+    }
     return;
   }
+
   document.querySelector('#preview-img').src = lastDataUrl;
   show('scanning');
   runScan();
 }
 
 let timerId = null;
+
 function startTimer() {
-  const el = document.querySelector('#scan-timer');
-  const t0 = Date.now();
-  if (el) el.textContent = '0.0s';
+  const timer = document.querySelector('#scan-timer');
+  const startedAt = Date.now();
   stopTimer();
+
+  if (timer) {
+    timer.textContent = '0.0s';
+  }
+
   timerId = setInterval(() => {
-    if (el) el.textContent = ((Date.now() - t0) / 1000).toFixed(1) + 's';
+    if (timer) {
+      timer.textContent = `${((Date.now() - startedAt) / 1000).toFixed(1)}s`;
+    }
   }, 100);
 }
+
 function stopTimer() {
-  if (timerId) { clearInterval(timerId); timerId = null; }
+  if (timerId) {
+    clearInterval(timerId);
+    timerId = null;
+  }
 }
 
 async function runScan() {
@@ -69,28 +106,44 @@ async function runScan() {
 
 function renderResult(data) {
   document.querySelector('#thumb').src = lastDataUrl;
-  document.querySelector('#obj-name').textContent = data.object?.name ?? '未知物品';
-  document.querySelector('#obj-state').textContent = data.object?.state ?? '';
-  document.querySelector('#diary-text').textContent = data.diary ?? '';
+  document.querySelector('#obj-name').textContent = data.object?.name ?? '未识别物品';
+  document.querySelector('#obj-state').textContent = data.object?.state ?? '可以换个角度再扫一次。';
+  document.querySelector('#diary-text').textContent = data.diary ?? '这件物品暂时还没整理出清晰故事。';
 
   const card = document.querySelector('#service-card');
+  const type = data.recommend?.type ?? 'tips';
   card.hidden = false;
-  card.dataset.type = data.recommend?.type ?? 'tips';
-  document.querySelector('#svc-title').textContent = data.recommend?.title ?? '';
-  document.querySelector('#svc-reason').textContent = data.recommend?.reason ?? '';
+  card.dataset.type = type;
+
+  if (copy.resultType) {
+    copy.resultType.textContent = serviceTypeMap[type] ?? serviceTypeMap.tips;
+  }
+
+  document.querySelector('#svc-title').textContent = data.recommend?.title ?? '先保留一下这件物品';
+  document.querySelector('#svc-reason').textContent = data.recommend?.reason ?? '目前更适合先收藏这次识别结果。';
 
   const cta = document.querySelector('#svc-cta');
   const tip = document.querySelector('#svc-tip');
-  cta.textContent = data.recommend?.cta ?? '查看';
+  cta.textContent = data.recommend?.cta ?? '查看建议';
   tip.hidden = true;
 
   cta.onclick = () => {
-    const kw = encodeURIComponent(data.recommend?.keyword ?? '');
-    const type = data.recommend?.type;
-    if (type === 'ecommerce') location.href = `https://s.taobao.com/search?q=${kw}`;
-    else if (type === 'local')  location.href = `https://i.meituan.com/s/${kw}`;
-    else if (type === 'resale') location.href = `https://2.taobao.com/search.htm?q=${kw}`;
-    else { tip.hidden = false; tip.textContent = data.recommend?.reason ?? ''; }
+    const keyword = encodeURIComponent(data.recommend?.keyword ?? '');
+    if (type === 'ecommerce') {
+      location.href = `https://s.taobao.com/search?q=${keyword}`;
+      return;
+    }
+    if (type === 'local') {
+      location.href = `https://i.meituan.com/s/${keyword}`;
+      return;
+    }
+    if (type === 'resale') {
+      location.href = `https://2.taobao.com/search.htm?q=${keyword}`;
+      return;
+    }
+
+    tip.hidden = false;
+    tip.textContent = data.recommend?.reason ?? '先从最容易执行的一步开始。';
   };
 
   removeError();
@@ -99,21 +152,33 @@ function renderResult(data) {
 function renderError(code) {
   document.querySelector('#service-card').hidden = true;
   document.querySelector('#diary-text').textContent = '';
-  document.querySelector('#obj-name').textContent = code === 'TIMEOUT' ? '超时了' : '出错了';
-  document.querySelector('#obj-state').textContent = code ?? '';
+  document.querySelector('#obj-name').textContent = code === 'TIMEOUT' ? '识别超时' : '出错了';
+  document.querySelector('#obj-state').textContent = formatErrorMessage(code);
+  document.querySelector('#thumb').src = lastDataUrl ?? '';
+
+  if (copy.resultType) {
+    copy.resultType.textContent = '识别异常';
+  }
 
   removeError();
   const tpl = document.querySelector('#tpl-error');
   const node = tpl.content.firstElementChild.cloneNode(true);
-  if (code === 'TIMEOUT') {
-    node.querySelector('p').textContent = 'AI 想了 60 秒还没结果，再试一次。';
-  }
+  node.querySelector('.error-text').textContent = formatErrorMessage(code);
   node.querySelector('#retry').addEventListener('click', () => {
     show('scanning');
     runScan();
   });
   document.querySelector('#screen-result').appendChild(node);
 }
+
 function removeError() {
   document.querySelector('#screen-result .error-card')?.remove();
+}
+
+function formatErrorMessage(code) {
+  if (code === 'TIMEOUT') return '这次分析超过 60 秒，换一张更清晰的图再试试。';
+  if (code === 'BAD_IMAGE') return '图片格式或大小不太合适，建议重新选择一张。';
+  if (code === 'MODEL_FAILED') return '模型这次没有稳定返回结果，重试通常可以恢复。';
+  if (code === 'NETWORK') return '网络连接出了点问题，确认服务和网络后再试。';
+  return '暂时没拿到可用结果，可以重新扫描一次。';
 }

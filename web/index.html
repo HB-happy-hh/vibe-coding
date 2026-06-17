@@ -8,58 +8,131 @@
 </head>
 <body>
   <main id="app">
-    <!-- 拍照屏 -->
+    <div class="ambient-glow ambient-glow-a"></div>
+    <div class="ambient-glow ambient-glow-b"></div>
+
     <section id="screen-capture" class="screen active">
-      <div class="finder">
-        <div class="corner tl"></div><div class="corner tr"></div>
-        <div class="corner bl"></div><div class="corner br"></div>
-        <p class="hint">把物品放进框里，看看它想说啥</p>
+      <header class="capture-header">
+        <p class="eyebrow">AI Object Diary</p>
+        <h1 class="app-title">万物皆可扫</h1>
+        <p class="app-slogan">拍一下，看看它想说什么，又适合去哪里。</p>
+      </header>
+
+      <div class="finder-shell">
+        <div class="finder">
+          <div class="finder-overlay"></div>
+          <div class="finder-grid" aria-hidden="true"></div>
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+          <div class="finder-copy">
+            <p class="finder-title">将物品放进取景框</p>
+            <p class="finder-hint" id="capture-hint">优先拍正面，光线均匀一点，识别会更稳。</p>
+          </div>
+        </div>
+
+        <div class="capture-tips" aria-label="拍摄建议">
+          <span>生活用品</span>
+          <span>旧物改造</span>
+          <span>闲置转卖</span>
+        </div>
       </div>
-      <div class="dock">
-        <button type="button" class="album" id="btn-album">相册</button>
-        <button type="button" class="shutter" id="btn-shutter" aria-label="拍照"></button>
-        <span class="placeholder-btn">闪光</span>
+
+      <div class="bottom-dock">
+        <button type="button" class="tool-button" id="btn-album" aria-label="从相册选择">
+          <span class="tool-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z" />
+              <path d="M8 10.5h.01" />
+              <path d="m20 15-4.5-4.5L8 18" />
+            </svg>
+          </span>
+          <span class="tool-label">相册</span>
+        </button>
+
+        <button type="button" class="shutter" id="btn-shutter" aria-label="拍照">
+          <span class="shutter-core"></span>
+        </button>
+
+        <button type="button" class="tool-button" id="btn-demo" aria-label="查看说明">
+          <span class="tool-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3.75a8.25 8.25 0 1 0 8.25 8.25A8.25 8.25 0 0 0 12 3.75" />
+              <path d="M12 16v-4.25a2.75 2.75 0 1 0-2.75-2.75" />
+              <path d="M12 19h.01" />
+            </svg>
+          </span>
+          <span class="tool-label">说明</span>
+        </button>
       </div>
+
       <input id="file-album" type="file" accept="image/*" hidden />
       <input id="file-camera" type="file" accept="image/*" capture="environment" hidden />
     </section>
 
-    <!-- 扫描中屏 -->
     <section id="screen-scanning" class="screen">
-      <div class="preview"><img id="preview-img" alt="" /><div class="scan-line"></div></div>
-      <p class="status">AI 正在阅读……<span id="scan-timer">0.0s</span></p>
-    </section>
-
-    <!-- 结果屏 -->
-    <section id="screen-result" class="screen">
-      <header class="result-head">
-        <img id="thumb" alt="" />
-        <div>
-          <div class="tag" id="obj-name">—</div>
-          <div class="state" id="obj-state">—</div>
+      <div class="status-shell">
+        <div class="preview-card">
+          <img id="preview-img" alt="待识别图片预览" />
+          <div class="preview-shade"></div>
+          <div class="scan-line"></div>
+          <div class="scan-badge">识别中</div>
         </div>
-      </header>
-      <article class="diary-card">
-        <span class="quote">「</span>
-        <p id="diary-text">—</p>
-      </article>
-      <article class="service-card" id="service-card">
-        <h3 id="svc-title">—</h3>
-        <p id="svc-reason">—</p>
-        <button id="svc-cta" type="button">—</button>
-        <p id="svc-tip" hidden></p>
-      </article>
-      <button id="retake" class="ghost" type="button">再扫一个</button>
+
+        <div class="status-card">
+          <p class="status-kicker">AI 正在分析画面</p>
+          <h2 class="status-title">先看物品，再想故事和去处</h2>
+          <p class="status-text">通常十几秒内会有结果，复杂物品可能稍慢一点。</p>
+          <div class="status-meta">
+            <span class="status-pill">识别耗时 <strong id="scan-timer">0.0s</strong></span>
+            <span class="status-pill">建议保持网络稳定</span>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- 错误屏（嵌在结果屏内） -->
+    <section id="screen-result" class="screen">
+      <div class="result-layout">
+        <header class="result-head">
+          <img id="thumb" alt="识别结果缩略图" />
+          <div class="result-head-copy">
+            <p class="result-kicker">识别完成</p>
+            <h2 id="obj-name">未识别物品</h2>
+            <p class="state" id="obj-state"></p>
+          </div>
+          <span class="result-type" id="result-type">灵感建议</span>
+        </header>
+
+        <article class="diary-card">
+          <p class="section-label">物品心里话</p>
+          <p id="diary-text">识别结果会显示在这里。</p>
+        </article>
+
+        <article class="service-card" id="service-card">
+          <p class="section-label">下一步建议</p>
+          <h3 id="svc-title"></h3>
+          <p id="svc-reason"></p>
+          <button id="svc-cta" type="button"></button>
+          <p id="svc-tip" hidden></p>
+        </article>
+
+        <div class="result-actions">
+          <button id="retake" class="ghost" type="button">重新扫描</button>
+        </div>
+      </div>
+    </section>
+
     <template id="tpl-error">
       <article class="error-card">
-        <p>AI 走神了，再试一次。</p>
-        <button id="retry" type="button">重试</button>
+        <p class="section-label">暂时没拿稳结果</p>
+        <h3>这次识别没有顺利完成</h3>
+        <p class="error-text">换一张更清晰的照片，再试一次。</p>
+        <button id="retry" type="button">再试一次</button>
       </article>
     </template>
   </main>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
