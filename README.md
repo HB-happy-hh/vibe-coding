@@ -25,7 +25,7 @@ cp .env.example .env        # Windows PowerShell： Copy-Item .env.example .env
 
 ```dotenv
 ANTHROPIC_API_KEY=填你的真实key
-ANTHROPIC_BASE_URL=         # 官方key留空；中转站key必须填中转地址，如 https://xxx.com/v1
+ANTHROPIC_BASE_URL=         # 官方key留空；中转站key填中转域名，如 https://xxx.com（不要带 /v1，SDK 会自动补）
 PORT=3000
 ```
 
@@ -46,9 +46,16 @@ cd web && npm install && npm run dev         # 出现 Local / Network 地址即�
 3. **整条链路通**：界面上传一张图，能出「物品名 + 日记 + 服务卡」即全通。
 4. （可选）后端单测：`cd server && npm test`，期望 6 个用例全过。
 
-## 手机访问（同一 WiFi 真机体验）
+## 手机访问（真机体验）
 
-手机与电脑连同一 WiFi，手机浏览器打开前端启动时打印的 **`Network`** 地址（形如 `http://192.168.x.x:5173`，不是 `localhost`）。
+**方式一 · 同一 WiFi**：手机与电脑连同一 WiFi，手机浏览器打开前端启动时打印的 **`Network`** 地址（形如 `http://192.168.x.x:5173`，不是 `localhost`）。
+
+**方式二 · 手机热点**（WiFi 连不上、或在校园网/公共 WiFi 时用，更可靠）：
+1. 手机开启个人热点。
+2. **电脑连这个热点**（注意是电脑连手机，不是手机连电脑）。
+3. 重新看前端终端打印的 `Network` 地址（连热点后 IP 会变，通常是 `172.20.10.x`），手机浏览器打开它。
+
+> 热点是你自己的网络，没有 AP 隔离，必通；代价是走一点手机流量（每次只传一张压缩到 1.8MB 内的图）。
 
 ## 跑不起来时
 
