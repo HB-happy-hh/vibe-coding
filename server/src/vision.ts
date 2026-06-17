@@ -31,7 +31,7 @@ export async function callVision(imageDataUrl: string): Promise<ScanResult> {
   });
 
   const resp = await client.chat.completions.create({
-    model: process.env.QWEN_MODEL || 'qwen3.6-plus',
+    model: process.env.QWEN_MODEL || 'qwen-vl-plus',
     max_tokens: 800,
     messages: [{
       role: 'user',

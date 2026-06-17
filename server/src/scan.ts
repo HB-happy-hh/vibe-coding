@@ -20,10 +20,10 @@ export function mountScan(app: Express): void {
       res.json(result);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'unknown';
+      console.error('[scan] error:', msg);
       if (/json/i.test(msg) || /no JSON/i.test(msg)) {
         return res.status(502).json({ error: { code: 'MODEL_FAILED', message: 'AI 走神了' } });
       }
-      console.error('[scan] error:', err);
       res.status(500).json({ error: { code: 'INTERNAL', message: '服务器错误' } });
     }
   });
