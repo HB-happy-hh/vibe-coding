@@ -44,23 +44,22 @@ cd web && npm install && npm run dev         # 出现 Local / Network 地址即�
 
 ## 部署到 Vercel
 
-本仓库已经同时保留了：
-- 本地开发入口：`server/src/index.ts`
-- Vercel 函数入口：`api/scan.ts`
+本仓库同时支持本地开发和 Vercel 部署：
+- 本地开发入口：`server/src/index.ts`（Express，`npm run dev`）
+- Vercel 函数入口：`api/scan.ts`（自包含，零跨目录导入）
 
-部署时直接让 Vercel 使用仓库根目录即可：
+部署步骤：
 
-1. 导入这个 Git 仓库
-2. Build Command 保持为仓库里的 `npm run build:web`
-3. Output Directory 保持为 `web/dist`
-4. 在 Vercel 项目环境变量里配置：
-   - `QWEN_API_KEY`
-   - `QWEN_BASE_URL`
-   - `QWEN_MODEL`
+1. 在 Vercel 导入这个 Git 仓库
+2. Framework 选 **Other**，Build Command 保持 `npm run build:web`，Output Directory 保持 `web/dist`
+3. Settings → Environment Variables 添加（全部选 Production）：
+   - `QWEN_API_KEY` — 阿里云百炼 API Key
+   - `QWEN_BASE_URL` — `https://dashscope.aliyuncs.com/compatible-mode/v1`
+   - `QWEN_MODEL` — `qwen-vl-plus`
+4. Deploy，完成后去 Settings → Deployment Protection → 关闭 Vercel Authentication（否则手机访问会要求登录）
+5. 生产域名在 Settings → Domains 查看，格式 `项目名.vercel.app`，不会变
 
-前端线上仍然请求同域名下的 `/api/scan`，不需要额外改前端接口地址。
-
-> 说明：Vercel 上的 `api/scan.ts` 会复用 `server/src/run-scan.ts`、`server/src/vision.ts` 和 `server/src/prompt.ts` 这套业务逻辑；本地开发和线上部署共用一份核心实现。
+> 说明：`api/scan.ts` 是自包含的 Serverless 函数，所有业务逻辑内联在单文件中，不依赖 `server/src/` 下的文件。本地开发照常用 Express + Vite proxy，两者互不干扰。
 
 ## 移动端使用步骤
 
@@ -78,7 +77,7 @@ cd web && npm install && npm run dev         # 出现 Local / Network 地址即�
 ### 启动相关
 - **后端报 key 错误** → `server/.env` base_url多写了/v1或没填真实 key。
 - **端口 3000 被占用（EADDRINUSE）** → 旧进程没关干净，用 `netstat -ano | findstr :3000` 找到 PID，`taskkill /PID <pid> /F` 杀掉。
-- **后端单测不过** → 可选步骤，不影响使用；如需验证：`cd server && npm test`，期望 6 个用例全过。
+- **后端单测不过** → 可选步骤，不影响使用；如需验证：`cd server && npm test`，期望 8 个用例全过。
 
 ### 扫描相关
 - **"AI 走神了"** → 可能原因：
@@ -87,11 +86,12 @@ cd web && npm install && npm run dev         # 出现 Local / Network 地址即�
   - 网络问题导致请求超时
   - 模型返回格式不符合预期（查看后端终端日志 `[vision] extractJson failed`）
 - **扫描超时（60秒）** → 图片过大或网络慢，前端会自动压缩到 1.8MB，但首次上传可能较慢；或检查 `QWEN_BASE_URL` 是否正确。
-- **识别结果不准确** → 
-1.Qwen-3.6-plus会把马克杯识别成花盆，Qwen-VL 识别准确
-2.智谱系列 GLM-5V-turbo识别较慢，超过60秒
-3.claude系列由于是中转站，效果最好但是不稳定，时常掉线。
-4.最终采用Qwen-VL
+- **识别结果不准确** → 模型对比经验：
+1. Qwen-3.6-plus 会把马克杯识别成花盆，不可用
+2. Qwen-VL 识别较准确，但仍有错误样例（如戴帽子的萨摩耶被识别成毛绒连衫帽）
+3. 智谱 GLM-5V-turbo 识别较慢，单次经常超过 60 秒
+4. Claude 系列经中转站调用，效果最好但不稳定，时常掉线
+5. 综合考虑准确率与稳定性，最终采用 Qwen-VL
 
 ### 移动端相关
 - **手机连不上** → 
