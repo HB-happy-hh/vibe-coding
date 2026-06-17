@@ -56,7 +56,7 @@ cd web && npm install && npm run dev         # 出现 Local / Network 地址即�
 ## 常见问题
 
 ### 启动相关
-- **后端报 key 错误** → `server/.env` 没建或没填真实 key。
+- **后端报 key 错误** → `server/.env` base_url多写了/v1或没填真实 key。
 - **端口 3000 被占用（EADDRINUSE）** → 旧进程没关干净，用 `netstat -ano | findstr :3000` 找到 PID，`taskkill /PID <pid> /F` 杀掉。
 - **后端单测不过** → 可选步骤，不影响使用；如需验证：`cd server && npm test`，期望 6 个用例全过。
 
@@ -67,15 +67,16 @@ cd web && npm install && npm run dev         # 出现 Local / Network 地址即�
   - 网络问题导致请求超时
   - 模型返回格式不符合预期（查看后端终端日志 `[vision] extractJson failed`）
 - **扫描超时（60秒）** → 图片过大或网络慢，前端会自动压缩到 1.8MB，但首次上传可能较慢；或检查 `QWEN_BASE_URL` 是否正确。
-- **识别结果不准确** → Qwen-VL 对中文物品识别较好，但复杂场景或小众物品可能偏差；可尝试换个角度重拍，或调整 `server/src/prompt.ts` 中的 prompt。
+- **识别结果不准确** → 
+1.Qwen-3.6-plus会把马克杯识别成花盆，Qwen-VL 识别准确
+2.智谱系列 GLM-5V-turbo识别较慢，超过60秒
+3.claude系列由于是中转站，效果最好但是不稳定，时常掉线。
+4.最终采用Qwen-VL
 
 ### 移动端相关
 - **手机连不上** → 
-  - ① Windows 防火墙拦截 5173 端口，临时关闭防火墙或添加入站规则
+  - ① Windows 防火墙拦截 5173 端口，临时关闭防火墙
   - ② 电脑代理软件（VPN/Clash）劫持局域网流量，临时关掉
   - ③ 校园网/公共 WiFi 有 AP 隔离，改用手机热点让电脑连
 - **手机拍照后卡住** → iOS 的 HEIC 格式已做兼容，但部分安卓机型可能有问题；尝试从相册选图而非直接拍照。
 
-### 其他
-- **前端白屏** → 检查浏览器控制台报错，多为前端 `/api/scan` 请求失败或后端未启动。
-- **Windows 换行符警告（LF/CRLF）** → Git 自动转换提示，不影响运行，可忽略。
