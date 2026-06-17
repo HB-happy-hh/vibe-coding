@@ -5,8 +5,12 @@
 
 ## 环境要求
 
-- Node.js **20+**（含 npm）。`node -v` 确认。
-- 一个 Anthropic API Key（官方 `sk-ant-...` 或中转站 key）。
+- **Node.js 20+**（含 npm）。先 `node -v` 检查；没装或版本低于 20：
+  - Windows / macOS：去 https://nodejs.org 下载 LTS 安装包，一路下一步即可。
+  - 或用版本管理器：Windows 用 [nvm-windows](https://github.com/coreybutler/nvm-windows)，macOS/Linux 用 [nvm](https://github.com/nvm-sh/nvm)，装好后 `nvm install 20 && nvm use 20`。
+- **一个 Anthropic API Key**：
+  - 官方 key：登录 https://console.anthropic.com → API Keys → 创建，形如 `sk-ant-...`。
+  - 或任意兼容的中转站 key（需同时拿到中转站的 baseURL 地址）。
 
 ## 配置密钥
 
